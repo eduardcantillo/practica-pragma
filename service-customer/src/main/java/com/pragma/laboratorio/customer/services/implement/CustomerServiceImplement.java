@@ -60,9 +60,12 @@ public class CustomerServiceImplement implements CustomerService{
 	@Override
 	public ResponseEntity<CustomerDto> findById(String identificacion) {
 		Customer found=this.customerDao.findById(identificacion).orElse(null);
+		if(found==null){
+			return ResponseEntity.notFound().build();
+		}
 		CustomerDto customerDto=modelMapper.map(found,CustomerDto.class);
 		customerDto.setFoto(fotoRest.findById(found.getFoto()).getBody());
-		return (found==null)? ResponseEntity.notFound().build():ResponseEntity.ok(customerDto);
+		return ResponseEntity.ok(customerDto);
 	}
 
 	@Override
@@ -121,6 +124,7 @@ public class CustomerServiceImplement implements CustomerService{
 		}
 		ResponseEntity<FotoDto> res=this.fotoRest.update(customerDb.getFoto(),customerDto.getFoto());
 		if(res.getStatusCodeValue()!=200){
+			System.out.println("fallo al actualizar la foto");
 			return ResponseEntity.internalServerError().build();
 		}
 		Customer customer=modelMapper.map(customerDto,Customer.class);
@@ -196,7 +200,10 @@ public class CustomerServiceImplement implements CustomerService{
 			if(cus==null){
 				return ResponseEntity.noContent().build();
 			}
-			return ResponseEntity.ok(modelMapper.map(cus,CustomerDto.class));
+			CustomerDto cust=modelMapper.map(cus,CustomerDto.class);
+			cust.setFoto(this.fotoRest.findById(cus.getFoto()).getBody());
+
+			return ResponseEntity.ok(cust);
 		}catch (Exception e){
 			return ResponseEntity.internalServerError().build();
 		}
