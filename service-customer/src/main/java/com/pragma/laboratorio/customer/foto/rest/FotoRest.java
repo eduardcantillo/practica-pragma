@@ -7,7 +7,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@FeignClient(name = "service-foto",decode404 = true,url = "http://localhost:8002/foto",fallback = FotoRestImple.class)
+@FeignClient(name = "service-foto",decode404 = true)
+@RequestMapping(value = "/foto")
 public interface FotoRest {
 
     @GetMapping()
