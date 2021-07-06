@@ -14,10 +14,10 @@ spring:
           enabled: true
       routes:
         - id: servicio-cliente
-          uri: lb://servicio-cliente
+          uri: lb://service-customer
           predicates:
             - Path=/customer/**
         - id: servicio-foto
-          uri: lb://servicio-foto
+          uri: lb://service-foto
           predicates:
             - Path=/foto/**
