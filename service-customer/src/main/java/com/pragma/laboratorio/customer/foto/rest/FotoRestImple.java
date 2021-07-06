@@ -1,4 +1,4 @@
-/*package com.pragma.laboratorio.customer.foto.rest;
+package com.pragma.laboratorio.customer.foto.rest;
 
 import com.pragma.laboratorio.customer.dto.FotoDto;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +15,7 @@ public class FotoRestImple implements FotoRest{
 
     @Override
     public ResponseEntity<FotoDto> save(FotoDto foto) {
-        return null;
+        return ResponseEntity.ok(new FotoDto("none",new byte[1]));
     }
 
     @Override
@@ -32,4 +32,4 @@ public class FotoRestImple implements FotoRest{
     public ResponseEntity<FotoDto> update(String id, FotoDto foto) {
         return ResponseEntity.ok(new FotoDto("none",new byte[1]));
     }
-}*/
+}
