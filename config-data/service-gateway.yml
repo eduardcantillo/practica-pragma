@@ -24,4 +24,4 @@ spring:
         - id: servicio-client
           uri: lb://service-customer
           predicates:
-            -Path=/id-type/**
+            - Path=/id-type/**
