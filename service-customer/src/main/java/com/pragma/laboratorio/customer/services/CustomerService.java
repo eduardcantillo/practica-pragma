@@ -6,9 +6,7 @@ import com.pragma.laboratorio.customer.dto.CustomerDto;
 import com.pragma.laboratorio.customer.entity.IdType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.BindingResult;
 
-import com.pragma.laboratorio.customer.entity.Customer;
 @Service
 public interface CustomerService {
 

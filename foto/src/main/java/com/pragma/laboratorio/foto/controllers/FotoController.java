@@ -1,15 +1,12 @@
 package com.pragma.laboratorio.foto.controllers;
 
-import com.pragma.laboratorio.foto.dao.IFotoDao;
 import com.pragma.laboratorio.foto.dto.FotoDto;
-import com.pragma.laboratorio.foto.entity.Foto;
 import com.pragma.laboratorio.foto.service.ServiceFoto;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -49,5 +46,9 @@ public class FotoController {
     @PutMapping("/{id}")
     public ResponseEntity<FotoDto> update(@PathVariable String id,@RequestBody FotoDto foto){
         return this.serviceFoto.update(foto,id);
+    }
+    @PostMapping("/by-ids")
+    public ResponseEntity<List<FotoDto>> findByIds(@RequestBody List<String> ids){
+        return this.serviceFoto.findByIdIn(ids);
     }
 }

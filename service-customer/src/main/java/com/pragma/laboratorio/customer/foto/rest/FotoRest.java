@@ -7,18 +7,20 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@FeignClient(name = "service-foto",decode404 = true,fallback = FotoRestImple.class)
+@FeignClient(name = "service-foto",path = "/foto",decode404 = true,fallback = FotoRestImple.class)
 
 public interface FotoRest {
 
-    @GetMapping("/foto")
+    @GetMapping()
     public ResponseEntity<List<FotoDto>> listAll();
-    @PostMapping
+    @PostMapping()
     public ResponseEntity<FotoDto> save(FotoDto foto);
-    @GetMapping("/foto/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<FotoDto> findById(@PathVariable String id);
-    @DeleteMapping("/foto/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Boolean> deleteById(@PathVariable String id);
-    @PutMapping("/foto/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<FotoDto> update(@PathVariable String id,@RequestBody FotoDto foto);
+    @PostMapping("/by-ids")
+    public ResponseEntity<List<FotoDto>> findByIds(@RequestBody List<String> ids);
 }

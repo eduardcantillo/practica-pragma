@@ -5,6 +5,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import com.pragma.laboratorio.customer.dto.IdTypeDto;
+import com.pragma.laboratorio.customer.entity.IdType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -18,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.pragma.laboratorio.customer.entity.IdType;
 import com.pragma.laboratorio.customer.services.IdTypeService;
 
 @RestController
@@ -40,7 +40,7 @@ public class IdTypeController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<IdTypeDto> save( @RequestBody IdType type,BindingResult result) {
+	public ResponseEntity<IdTypeDto> save(@RequestBody IdType type, BindingResult result) {
 		return typeService.save(type,result);
 		
 	}

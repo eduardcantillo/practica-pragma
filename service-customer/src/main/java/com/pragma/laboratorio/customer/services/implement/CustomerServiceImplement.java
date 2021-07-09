@@ -11,6 +11,7 @@ import javax.validation.Valid;
 
 import com.pragma.laboratorio.customer.dto.CustomerDto;
 import com.pragma.laboratorio.customer.dto.FotoDto;
+import com.pragma.laboratorio.customer.entity.Customer;
 import com.pragma.laboratorio.customer.entity.IdType;
 import com.pragma.laboratorio.customer.foto.rest.FotoRest;
 import org.modelmapper.ModelMapper;
@@ -19,10 +20,8 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BindingResult;
 
 import com.pragma.laboratorio.customer.dao.ICustomerDao;
-import com.pragma.laboratorio.customer.entity.Customer;
 import com.pragma.laboratorio.customer.services.CustomerService;
 
 
@@ -43,7 +42,9 @@ public class CustomerServiceImplement implements CustomerService{
 		List<Customer> customers=this.customerDao.findAll();
 		List<CustomerDto> customersDto=new ArrayList<>();
 		List<FotoDto> fotoDtos=this.fotoRest.listAll().getBody();
-		Map <String,FotoDto> fotos=new HashMap<>();
+
+		Map <String, FotoDto> fotos=new HashMap<>();
+
 		for (FotoDto foto: fotoDtos){
 			fotos.put(foto.get_id(),foto);
 		}
@@ -74,23 +75,22 @@ public class CustomerServiceImplement implements CustomerService{
 		FotoDto fotoDto=customerDto.getFoto();
 
 		Customer found=this.customerDao.findById(customer.getIdentificacion()).orElse(null);
+
+
+		if(found!=null) { return ResponseEntity.badRequest().build();}
+
 		ResponseEntity<FotoDto> res=this.fotoRest.save(fotoDto);
 
 		if(res.getStatusCodeValue()!=200){
-			System.out.println("fallo al guardar en service foto");
+			System.out.println(res.getBody());
 			return ResponseEntity.internalServerError().build();
 		}
-
-		if(found!=null) { return ResponseEntity.badRequest().build();}
-		
-		
 		try {
 			customer.setFoto(res.getBody().get_id());
 			this.customerDao.save(customer);
 			return ResponseEntity.ok(customerDto);
 			
 		}catch (Exception e) {
-			System.out.println("fallo al guardar la foto");
 			return ResponseEntity.internalServerError().build();
 		}
 	}
@@ -123,10 +123,10 @@ public class CustomerServiceImplement implements CustomerService{
 			return ResponseEntity.notFound().build();
 		}
 		ResponseEntity<FotoDto> res=this.fotoRest.update(customerDb.getFoto(),customerDto.getFoto());
-		if(res.getStatusCodeValue()!=200){
-			System.out.println("fallo al actualizar la foto");
+		if(res.getStatusCodeValue()!=200 ){
 			return ResponseEntity.internalServerError().build();
 		}
+
 		Customer customer=modelMapper.map(customerDto,Customer.class);
 
 		
@@ -134,6 +134,7 @@ public class CustomerServiceImplement implements CustomerService{
 		customerDb.setCiudad(customer.getCiudad());
 		customerDb.setEdad(customer.getEdad());
 		customerDb.setNombres(customer.getNombres());
+		customerDb.setFoto(res.getBody().get_id());
 
 		
 		try {
@@ -151,12 +152,14 @@ public class CustomerServiceImplement implements CustomerService{
 	public ResponseEntity<List<CustomerDto>> findByAge(int age) {
 		List<Customer> customers=this.customerDao.findByEqualsOrGreater(age);
 		List<CustomerDto> customersDto=new ArrayList<>();
-		ResponseEntity<List<FotoDto>> res=this.fotoRest.listAll();
-		if(customers ==null || customers.isEmpty()){
+		List<String> ids=customers.stream().map(Customer::getFoto).collect(Collectors.toList());
+		ResponseEntity<List<FotoDto>> res=this.fotoRest.findByIds(ids);
+
+		if(customers.isEmpty()){
 			return ResponseEntity.noContent().build();
 		}
 		if(res.getStatusCodeValue()!=200){
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.internalServerError().body(customers.stream().map(ele -> modelMapper.map(ele,CustomerDto.class)).collect(Collectors.toList()));
 		}
 		List<FotoDto> fotos=res.getBody();
 		Map <String,FotoDto> fotosAasignar=new HashMap<>();
@@ -178,13 +181,26 @@ public class CustomerServiceImplement implements CustomerService{
 		try{
 			List<Customer> customers=this.customerDao.findByIdType(idType);
 			List<CustomerDto> customerDtos=new ArrayList<>();
+			ResponseEntity<List<FotoDto>> res=this.fotoRest.listAll();
+
+			if(res.getStatusCodeValue()!=200){
+				return ResponseEntity.notFound().build();
+			}
 
 			if(customers ==null || customers.isEmpty()){
 				return ResponseEntity.noContent().build();
 			}
+			List<FotoDto> fotos=res.getBody();
+			Map <String,FotoDto> fotosAasignar=new HashMap<>();
+			for(FotoDto foto:fotos){
+				fotosAasignar.put(foto.get_id(),foto);
+			}
 
+			CustomerDto aux;
 			for (Customer cs: customers){
-				customerDtos.add(modelMapper.map(cs,CustomerDto.class));
+				aux=modelMapper.map(cs,CustomerDto.class);
+				aux.setFoto(fotosAasignar.get(cs.getFoto()));
+				customerDtos.add(aux);
 			}
 
 			return ResponseEntity.ok(customerDtos);
@@ -197,11 +213,18 @@ public class CustomerServiceImplement implements CustomerService{
 	public ResponseEntity<CustomerDto> findByIdTypeAndIdentificacion(IdType idType,String id) {
 		try{
 			Customer cus=this.customerDao.findByIdTypeAndIdentificacion(idType,id);
+
+
 			if(cus==null){
 				return ResponseEntity.noContent().build();
 			}
+			ResponseEntity<FotoDto> res=this.fotoRest.findById(cus.getFoto());
 			CustomerDto cust=modelMapper.map(cus,CustomerDto.class);
-			cust.setFoto(this.fotoRest.findById(cus.getFoto()).getBody());
+			if(res.getStatusCodeValue()!=200){
+				return ResponseEntity.ok(cust);
+			}
+
+			cust.setFoto(res.getBody());
 
 			return ResponseEntity.ok(cust);
 		}catch (Exception e){

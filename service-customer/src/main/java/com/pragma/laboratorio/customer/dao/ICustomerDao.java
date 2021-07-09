@@ -2,11 +2,10 @@ package com.pragma.laboratorio.customer.dao;
 
 import java.util.List;
 
+import com.pragma.laboratorio.customer.entity.Customer;
 import com.pragma.laboratorio.customer.entity.IdType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-
-import com.pragma.laboratorio.customer.entity.Customer;
 
 public interface ICustomerDao extends  JpaRepository<Customer, String>{
 

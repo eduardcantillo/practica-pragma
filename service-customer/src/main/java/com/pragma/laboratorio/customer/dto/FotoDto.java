@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FotoDto{
-        private String _id;
-        private byte[] content;
+    private String _id;
+    private byte[] content;
 }

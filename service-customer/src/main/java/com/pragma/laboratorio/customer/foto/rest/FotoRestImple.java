@@ -4,6 +4,7 @@ import com.pragma.laboratorio.customer.dto.FotoDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 @Component
@@ -31,5 +32,10 @@ public class FotoRestImple implements FotoRest{
     @Override
     public ResponseEntity<FotoDto> update(String id, FotoDto foto) {
         return ResponseEntity.ok(new FotoDto("none",new byte[1]));
+    }
+
+    @Override
+    public ResponseEntity<List<FotoDto>> findByIds(List<String> ids) {
+        return ResponseEntity.ok(new ArrayList<FotoDto>());
     }
 }

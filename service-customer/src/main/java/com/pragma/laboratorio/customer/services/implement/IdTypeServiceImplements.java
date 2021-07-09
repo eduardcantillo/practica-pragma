@@ -6,6 +6,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import com.pragma.laboratorio.customer.dto.IdTypeDto;
+import com.pragma.laboratorio.customer.entity.IdType;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.NoSuchMessageException;
@@ -16,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 
 import com.pragma.laboratorio.customer.dao.IIdTypeDao;
-import com.pragma.laboratorio.customer.entity.IdType;
 import com.pragma.laboratorio.customer.services.IdTypeService;
 @Service
 public class IdTypeServiceImplements implements IdTypeService {

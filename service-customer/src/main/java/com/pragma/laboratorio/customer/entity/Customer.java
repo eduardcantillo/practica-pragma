@@ -27,35 +27,35 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Customer implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	
-	
-	
-	 @Id
-	 @NotBlank(message = "La identificacion no puede ser vacia ni nula")
-	 private String identificacion;
-	
-	 @NotBlank(message = "El nombre no puede ser vacio ni nulo")
-	 private String nombres;
-	 
-	 @NotBlank(message = "El apellido no puede ser vacio ni nulo")
-	 private String apellidos;
-	 
-	
-	 @JoinColumn(name = "id_type")
-	 @ManyToOne
-	 private IdType idType;
-	
-	
-	 @Positive(message = "la edad debe ser un numero mayor que cero")
-	 private Integer edad;
-	 
-	 @NotBlank(message = "la ciudad debe ser valida") 
-	 private String ciudad;
-	 private String foto;
-	 
-	 
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
+
+
+
+    @Id
+    @NotBlank(message = "La identificacion no puede ser vacia ni nula")
+    private String identificacion;
+
+    @NotBlank(message = "El nombre no puede ser vacio ni nulo")
+    private String nombres;
+
+    @NotBlank(message = "El apellido no puede ser vacio ni nulo")
+    private String apellidos;
+
+
+    @JoinColumn(name = "id_type")
+    @ManyToOne
+    private IdType idType;
+
+
+    @Positive(message = "la edad debe ser un numero mayor que cero")
+    private Integer edad;
+
+    @NotBlank(message = "la ciudad debe ser valida")
+    private String ciudad;
+    private String foto;
+
+
 }

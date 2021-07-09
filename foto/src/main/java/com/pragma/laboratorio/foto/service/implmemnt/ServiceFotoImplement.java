@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class ServiceFotoImplement implements ServiceFoto {
     @Autowired
@@ -64,11 +66,15 @@ public class ServiceFotoImplement implements ServiceFoto {
     }
 
     @Override
-    public ResponseEntity<FotoDto> update(FotoDto fotoDto,String id) {
+    public ResponseEntity<FotoDto> update(FotoDto fotoDto, String id) {
         Foto foto=this.fotoDao.findById(id).orElse(null);
 
         if(foto==null){
-            return ResponseEntity.notFound().build();
+
+           Foto foton=modelMapper.map(fotoDto,Foto.class);
+            foto=this.fotoDao.save(foton);
+            FotoDto fotod=modelMapper.map(foto,FotoDto.class);
+            return ResponseEntity.ok(fotod);
         }
         try {
             foto.setContent(fotoDto.getContent());
@@ -83,5 +89,15 @@ public class ServiceFotoImplement implements ServiceFoto {
 
 
 
+    }
+
+    @Override
+    public ResponseEntity<List<FotoDto>> findByIdIn(List<String> ids) {
+        try{
+        List<FotoDto> fotosDto=this.fotoDao.findBy_idIn(ids).stream().map(ele -> modelMapper.map(ele,FotoDto.class)).collect(Collectors.toList());
+        return ResponseEntity.ok(fotosDto);
+        }catch (Exception e){
+            return ResponseEntity.internalServerError().build();
+        }
     }
 }
