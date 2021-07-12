@@ -9,16 +9,16 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import com.pragma.laboratorio.customer.dao.IIdTypeDao;
 import com.pragma.laboratorio.customer.dto.CustomerDto;
 import com.pragma.laboratorio.customer.dto.FotoDto;
 import com.pragma.laboratorio.customer.entity.Customer;
 import com.pragma.laboratorio.customer.entity.IdType;
 import com.pragma.laboratorio.customer.foto.rest.FotoRest;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +29,7 @@ import com.pragma.laboratorio.customer.services.CustomerService;
 
 @Service
 @AllArgsConstructor
+@NoArgsConstructor
 public class CustomerServiceImplement implements CustomerService{
 
 	@Autowired
@@ -39,6 +40,9 @@ public class CustomerServiceImplement implements CustomerService{
 
 	@Autowired
 	FotoRest fotoRest;
+
+	@Autowired
+	IIdTypeDao idTypeDao;
 
 	@Override
 	public List<CustomerDto> findAll() {
@@ -82,11 +86,15 @@ public class CustomerServiceImplement implements CustomerService{
 
 
 		if(found!=null) { return ResponseEntity.badRequest().build();}
+		IdType existe =idTypeDao.findById(customerDto.getIdType().getId()).orElse(null);
+
+		if(existe==null){
+			return ResponseEntity.badRequest().build();
+		}
 
 		ResponseEntity<FotoDto> res=this.fotoRest.save(fotoDto);
 
 		if(res.getStatusCodeValue()!=200){
-			System.out.println(res.getBody());
 			return ResponseEntity.internalServerError().build();
 		}
 		try {
@@ -106,7 +114,7 @@ public class CustomerServiceImplement implements CustomerService{
 			this.customerDao.deleteById(identificion);
 			this.fotoRest.deleteById(customer.getFoto());
 				return true;
-			}catch (DataAccessException e) {
+			}catch (Exception e) {
 				return false;
 			}
 		}
@@ -185,15 +193,18 @@ public class CustomerServiceImplement implements CustomerService{
 		try{
 			List<Customer> customers=this.customerDao.findByIdType(idType);
 			List<CustomerDto> customerDtos=new ArrayList<>();
-			ResponseEntity<List<FotoDto>> res=this.fotoRest.listAll();
-
-			if(res.getStatusCodeValue()!=200){
-				return ResponseEntity.notFound().build();
-			}
+			List<String> ids=customers.stream().map(Customer::getFoto).collect(Collectors.toList());
 
 			if(customers ==null || customers.isEmpty()){
 				return ResponseEntity.noContent().build();
 			}
+
+			ResponseEntity<List<FotoDto>> res=this.fotoRest.findByIds(ids);
+			if(res.getStatusCodeValue()!=200){
+				return ResponseEntity.notFound().build();
+			}
+
+
 			List<FotoDto> fotos=res.getBody();
 			Map <String,FotoDto> fotosAasignar=new HashMap<>();
 			for(FotoDto foto:fotos){
@@ -219,7 +230,7 @@ public class CustomerServiceImplement implements CustomerService{
 			Customer cus=this.customerDao.findByIdTypeAndIdentificacion(idType,id);
 
 
-			if(cus==null){
+			if(cus==null ){
 				return ResponseEntity.noContent().build();
 			}
 			ResponseEntity<FotoDto> res=this.fotoRest.findById(cus.getFoto());
