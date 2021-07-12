@@ -15,6 +15,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -23,6 +24,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "customers")
 @NamedQuery(name="Customer.findAll", query="SELECT c FROM Customer c")
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Customer implements Serializable {

@@ -14,6 +14,8 @@ import com.pragma.laboratorio.customer.dto.FotoDto;
 import com.pragma.laboratorio.customer.entity.Customer;
 import com.pragma.laboratorio.customer.entity.IdType;
 import com.pragma.laboratorio.customer.foto.rest.FotoRest;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -26,6 +28,7 @@ import com.pragma.laboratorio.customer.services.CustomerService;
 
 
 @Service
+@AllArgsConstructor
 public class CustomerServiceImplement implements CustomerService{
 
 	@Autowired
@@ -48,6 +51,7 @@ public class CustomerServiceImplement implements CustomerService{
 		for (FotoDto foto: fotoDtos){
 			fotos.put(foto.get_id(),foto);
 		}
+
 
 		for (Customer c:customers) {
 			CustomerDto cus=modelMapper.map(c,CustomerDto.class);
