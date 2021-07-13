@@ -7,6 +7,8 @@ import javax.validation.Valid;
 
 import com.pragma.laboratorio.customer.dto.IdTypeDto;
 import com.pragma.laboratorio.customer.entity.IdType;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.NoSuchMessageException;
@@ -19,6 +21,8 @@ import org.springframework.validation.BindingResult;
 import com.pragma.laboratorio.customer.dao.IIdTypeDao;
 import com.pragma.laboratorio.customer.services.IdTypeService;
 @Service
+@AllArgsConstructor
+@NoArgsConstructor
 public class IdTypeServiceImplements implements IdTypeService {
 
 	@Autowired
@@ -51,8 +55,15 @@ public class IdTypeServiceImplements implements IdTypeService {
 		
 		try {
 			if(result.hasErrors()) {
+				System.out.println("no creado");
 				throw new NoSuchMessageException("Los datos no son correctos");}
+
+			if (idType.getDescripcion()==null || idType.getNombre()==null){
+				System.out.println("no creado");
+				throw new NoSuchMessageException("Los datos no son correctos");
+			}
 			IdTypeDto ans=modelMapper.map(this.typeDao.save(idType),IdTypeDto.class);
+			System.out.println("creado");
 				return ResponseEntity.status(HttpStatus.CREATED).body(ans);
 			
 		} catch (Exception e) {
@@ -65,6 +76,7 @@ public class IdTypeServiceImplements implements IdTypeService {
 	public boolean deleteById(Integer id) {
 		try {
 		this.typeDao.deleteById(id);
+
 			return true;
 		}catch (DataAccessException e) {
 			return false;
@@ -75,7 +87,7 @@ public class IdTypeServiceImplements implements IdTypeService {
 	@Override
 	public ResponseEntity<IdTypeDto> updateIdType(@Valid IdType idType, BindingResult result,int toUpdate) {
 		
-		if(result.hasErrors()) {
+		if(result.hasErrors()|| idType.getNombre()==null || idType.getDescripcion()==null) {
 			return ResponseEntity.badRequest().build();
 		}
 		
