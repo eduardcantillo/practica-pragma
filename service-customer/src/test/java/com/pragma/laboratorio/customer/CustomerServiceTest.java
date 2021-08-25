@@ -59,19 +59,19 @@ public class CustomerServiceTest {
         Mockito.when(customerDao.findAll()).thenReturn(Datos.getClientes());
         Mockito.when(fotoRest.listAll()).thenReturn(ResponseEntity.ok(Datos.getAllFotos()));
 
-        List<CustomerDto> customer=customerService.findAll();
+        ResponseEntity<List<CustomerDto>>customer=customerService.findAll();
 
-        assertEquals(2,customer.size());
+        assertEquals(2,customer.getBody().size());
 
-        assertEquals("eduard",customer.get(0).getNombres());
-        assertEquals("123456",customer.get(0).getIdentificacion());
-        assertEquals(1,customer.get(0).getIdType().getId());
-        assertEquals("123456",customer.get(0).getFoto().get_id());
+        assertEquals("eduard",customer.getBody().get(0).getNombres());
+        assertEquals("123456",customer.getBody().get(0).getIdentificacion());
+        assertEquals(1,customer.getBody().get(0).getIdType().getId());
+        assertEquals("123456",customer.getBody().get(0).getFoto().get_id());
 
-        assertEquals("jose",customer.get(1).getNombres());
-        assertEquals("123457",customer.get(1).getIdentificacion());
-        assertEquals(1,customer.get(1).getIdType().getId());
-        assertEquals("1234567",customer.get(1).getFoto().get_id());
+        assertEquals("jose",customer.getBody().get(1).getNombres());
+        assertEquals("123457",customer.getBody().get(1).getIdentificacion());
+        assertEquals(1,customer.getBody().get(1).getIdType().getId());
+        assertEquals("1234567",customer.getBody().get(1).getFoto().get_id());
 
 
     }

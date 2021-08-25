@@ -45,8 +45,13 @@ public class CustomerServiceImplement implements CustomerService{
 	IIdTypeDao idTypeDao;
 
 	@Override
-	public List<CustomerDto> findAll() {
+	public ResponseEntity<List<CustomerDto>> findAll() {
 		List<Customer> customers=this.customerDao.findAll();
+
+		if(customers.isEmpty()){
+			return ResponseEntity.noContent().build();
+		}
+
 		List<CustomerDto> customersDto=new ArrayList<>();
 		List<FotoDto> fotoDtos=this.fotoRest.listAll().getBody();
 
@@ -62,7 +67,7 @@ public class CustomerServiceImplement implements CustomerService{
 			cus.setFoto(fotos.get(c.getFoto()));
 			customersDto.add(cus);
 		}
-		return customersDto;
+		return ResponseEntity.ok(customersDto);
 	}
 
 	@Transactional(readOnly = true)

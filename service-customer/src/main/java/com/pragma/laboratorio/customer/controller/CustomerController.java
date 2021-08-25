@@ -6,7 +6,11 @@ import com.pragma.laboratorio.customer.dto.CustomerDto;
 import com.pragma.laboratorio.customer.dto.FotoDto;
 import com.pragma.laboratorio.customer.entity.IdType;
 import com.pragma.laboratorio.customer.foto.rest.FotoRest;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +30,9 @@ public class CustomerController {
 	private FotoRest fotos;
 
 	@GetMapping
-	public List<CustomerDto> findAll(){
+	@ApiOperation(value = "List all",notes = "List all the customer on the bd")
+	@ApiResponses(value = {@ApiResponse(code = 200,message = "An array whit all customer"),@ApiResponse(code =204,message = "a response whitout body whit status 204",response =List.class)})
+	public ResponseEntity<List<CustomerDto>> findAll(){
 		return this.customerService.findAll();
 	}
 

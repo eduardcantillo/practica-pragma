@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 @Service
 public interface CustomerService {
 
-	public List<CustomerDto> findAll();
+	public ResponseEntity<List<CustomerDto>> findAll();
 	public ResponseEntity<CustomerDto> findById(String identificacion);
 	public ResponseEntity<CustomerDto>  save(CustomerDto customerDto);
 	public boolean deleteById(String identificion);
